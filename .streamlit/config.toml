@@ -1,0 +1,77 @@
+# .streamlit/config.toml
+# Place this file in a .streamlit folder in your project root
+
+[browser]
+# Internet address where users should point their browsers to connect to the app
+serverAddress = "localhost"
+
+# Whether to send usage statistics to Streamlit
+gatherUsageStats = false
+
+# Port where users should point their browsers to connect to the app
+serverPort = 8501
+
+[runner]
+# Allows you to type a variable or string by itself in a single line of Python code to write it to the app
+magicEnabled = true
+
+# Install a Python tracer to allow you to stop or pause your script at any point and introspect it
+installTracer = false
+
+# Sets the MPLBACKEND environment variable to Agg inside Streamlit to prevent Python crashing
+fixMatplotlib = true
+
+# Run the Python Garbage Collector after each script execution
+postScriptGC = true
+
+[client]
+# Whether to enable st.cache
+caching = true
+
+# If false, makes your Streamlit script not draw to a Streamlit app
+displayEnabled = true
+
+# Controls whether uncaught app exceptions are displayed in the browser
+showErrorDetails = true
+
+# Change the visibility of items in the toolbar, options are "auto", "developer", "viewer", "minimal"
+toolbarMode = "auto"
+
+[theme]
+# Primary accent color for interactive elements
+primaryColor = "#667eea"
+
+# Background color for the main content area
+backgroundColor = "#0f0c29"
+
+# Background color for sidebar and most interactive widgets
+secondaryBackgroundColor = "#1a1a2e"
+
+# Color used for almost all text
+textColor = "#ffffff"
+
+# Font family for all text in the app, except code blocks
+font = "sans serif"
+
+[server]
+# Enable file watching
+fileWatcherType = "auto"
+
+# Port to use for the server
+port = 8501
+
+# Address to bind the server to
+address = "localhost"
+
+# Whether to enable CORS protection
+enableCORS = false
+
+# Whether to enable XSS protection
+enableXsrfProtection = true
+
+# Max size, in megabytes, for files uploaded with the file_uploader
+maxUploadSize = 200
+
+# Enables support for websocket compression
+enableWebsocketCompression = false
+
