@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # --- API KEYS ---
-GOOGLE_API_KEY = os.environ.get("GEMINI_API_KEY")
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 SERPER_API_KEY = os.environ.get("SERPER_API_KEY")
 print(GOOGLE_API_KEY)
 print(SERPER_API_KEY)
