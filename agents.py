@@ -1,37 +1,10 @@
 from datetime import datetime
 from langchain_core.prompts import PromptTemplate
-from langgraph.prebuilt import create_react_agent
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 from state import EnhancedAgentState
 from tools import news_search_tool
 
-# Enhanced prompts for specialized agents
-RESEARCH_PROMPT = PromptTemplate.from_template("""
-You are a senior research analyst specializing in technology and current events. 
-
-Your task is to research the following topic: "{topic}"
-
-IMPORTANT: You have access to a search tool that retrieves the most recent news (past 24 hours). 
-You MUST use the 'search' tool multiple times with different queries to gather comprehensive information.
-
-Requirements:
-1. Use the search tool at least 3-5 times with different query variations
-2. Find the latest and most relevant news and developments
-3. Identify key trends, facts, and figures
-4. Gather information from credible sources
-5. Provide at least 5-7 key findings with source URLs
-6. Structure your findings logically
-
-Example search queries for a topic about "AI in healthcare":
-- search("AI healthcare latest news")
-- search("artificial intelligence medical breakthroughs 2025")
-- search("AI diagnosis treatment innovations")
-
-Your research should be thorough but concise. Focus on factual information that would be valuable for writing an engaging blog post.
-
-Format your response as a well-structured research report.
-""")
 
 WRITER_PROMPT = PromptTemplate.from_template("""
 You are a skilled tech content writer with expertise in creating engaging, informative blog posts.
@@ -98,21 +71,69 @@ def research_node(state: EnhancedAgentState, llm) -> Dict[str, Any]:
     """Enhanced research agent that gathers comprehensive information."""
     
     topic = state["topic"]
-    tools = [news_search_tool]
     
-    # Create research agent
-    agent = create_react_agent(llm, tools=tools)
+    # Create a more direct approach to using the search tool
+    # First, generate search queries based on the topic
+    query_prompt = PromptTemplate.from_template("""
+You are a research analyst. Generate 3-5 different search queries for researching the topic: "{topic}"
+
+Make the queries specific and varied to gather comprehensive information if dates would be added in the queries it must be either relativve (last week , next week, last month, next month, etc...) or using the year 2025.
+Output only the search queries, one per line, no explanations.
+""")
     
-    # Execute research
-    result = agent.invoke({
-        "messages": [("user", RESEARCH_PROMPT.format(topic=topic))]
-    })
+    # Get search queries from the LLM
+    queries_response = llm.invoke(query_prompt.format(topic=topic))
+    queries = [q.strip() for q in queries_response.content.strip().split('\n') if q.strip()]
     
-    research_content = result['messages'][-1].content
+    # Perform searches
+    search_results = []
+    for query in queries[:5]:  # Limit to 5 searches
+        try:
+            result = news_search_tool.func(query)
+            search_results.append({
+                "query": query,
+                "results": result
+            })
+        except Exception as e:
+            print(f"Search error for query '{query}': {e}")
+    
+    # Now compile the research report
+    research_prompt = PromptTemplate.from_template("""
+You are a senior research analyst. Based on the following search results about "{topic}", 
+create a comprehensive research report.
+
+Search Results:
+{search_results}
+
+Create a well-structured research report that includes:
+1. Executive Summary (2-3 sentences)
+2. Key Findings (5-7 bullet points with sources)
+3. Detailed Analysis
+4. Notable Trends and Insights
+5. Source URLs
+
+Make sure to cite specific information from the search results.
+""")
+    
+    # Format search results for the prompt
+    formatted_results = ""
+    for sr in search_results:
+        formatted_results += f"\n\nQuery: {sr['query']}\n"
+        formatted_results += f"Results:\n{sr['results']}\n"
+        formatted_results += "-" * 50
+    
+    # Generate the research report
+    report_response = llm.invoke(
+        research_prompt.format(
+            topic=topic,
+            search_results=formatted_results
+        )
+    )
     
     return {
-        "research_report": research_content,
-        "agent_notes": {"research_agent": "Completed comprehensive research"},
+        "research_report": report_response.content,
+        "research_sources": search_results,
+        "agent_notes": {"research_agent": f"Completed research with {len(search_results)} searches"},
         "generation_timestamp": datetime.now().isoformat()
     }
 

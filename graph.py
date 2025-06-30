@@ -23,8 +23,7 @@ def create_enhanced_graph(temperature=0.3, streaming=False):
     llm = ChatGoogleGenerativeAI(
         model=MODEL_NAME, 
         temperature=temperature, 
-        google_api_key=GOOGLE_API_KEY,
-        streaming=streaming
+        google_api_key=GOOGLE_API_KEY
     )
 
     # Create specialized agent nodes with LLM

@@ -19,7 +19,8 @@ def cached_generation(topic: str, temperature: float) -> Dict[str, Any]:
 
 def stream_generation(topic: str, temperature: float) -> Generator[Dict[str, Any], None, None]:
     """Stream the generation process with progress updates."""
-    graph = create_enhanced_graph(temperature=temperature, streaming=True)
+    # Note: streaming parameter removed as it's not supported by Google Gemini
+    graph = create_enhanced_graph(temperature=temperature)
     
     # Stream the graph execution
     for chunk in graph.stream({TOPIC: topic}):
