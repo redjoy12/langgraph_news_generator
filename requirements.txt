@@ -1,8 +1,30 @@
-streamlit
-langchain
-langchain-core
-langgraph
-langchain-google-genai
-ipython
-python-dotenv
-langchain-community
+# Core dependencies
+streamlit>=1.28.0
+langchain>=0.0.340
+langchain-core>=0.1.0
+langgraph>=0.0.60
+langchain-google-genai>=1.0.0
+langchain-community>=0.0.340
+
+# Utility dependencies
+python-dotenv>=1.0.0
+ipython>=8.10.0
+
+# Enhanced features dependencies
+streamlit-authenticator>=0.2.3  # For user authentication if needed
+streamlit-aggrid>=0.3.4         # For better data display
+plotly>=5.17.0                  # For potential analytics dashboards
+pandas>=2.0.0                   # For data handling and caching
+requests>=2.31.0                # For additional API calls
+cachetools>=5.3.0               # Enhanced caching utilities
+
+# Development and testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.5.0
+
+# Optional: Performance monitoring
+psutil>=5.9.0                   # System resource monitoring
+memory-profiler>=0.61.0         # Memory usage tracking
